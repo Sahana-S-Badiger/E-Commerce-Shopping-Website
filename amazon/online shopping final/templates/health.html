@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .clothing-images {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .clothing-images img {
+            width: 48%;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .clothing-images img {
+                width: 100%;
+            }
+        }
+
+        /* Box content CSS */
+        .box-content {
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .box-content h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .box-content .box-img {
+            width: 100%;
+            height: 200px;
+            background-size: contain; /* Ensure the background image fully appears within the box */
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .box-content .content {
+            text-align: left;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Health & Personal Care</h2>
+        <div class="clothing-images">
+            <div class="box-content">
+                <div class="box-img" style="background-image: url('/static/images/15.jpg');"></div>
+                <div class="content">
+                    <p>Placeholder for health product description</p>
+                    <p>₹ Price M.R.P: <s>₹Placeholder</s> (Discount% off)</p>
+                    <span class="wishlist-icon" onclick="addToWishlist('KAPIVA')">❤</span>
+                    <p>Free delivery</p>
+                </div>
+            </div>
+            <div class="box-content">
+                <div class="box-img" style="background-image: url('/static/images/16.jpg');"></div>
+                <div class="content">
+                    <p>Placeholder for health product description</p>
+                    <p>₹ Price M.R.P: <s>₹Placeholder</s> (Discount% off)</p>
+                    <span class="wishlist-icon" onclick="addToWishlist('CENTRUM')">❤</span>
+                    <p>Free delivery</p>
+                </div>
+            </div>
+        </div>
+
+     <!-- Checkout form -->
+     <form action="/checkout" method="post">
+        <input type="hidden" name="user_id" value="1"> <!-- Assuming you know the user's ID -->
+        <input type="hidden" name="item_name" value="Item to Checkout">
+        <button type="submit">Checkout</button>
+    </form>
+
+    <!-- Wishlist Section -->
+    <div id="wishlist-section">
+        <h2>Wishlist Items</h2>
+        <ul id="wishlist-items">
+            <!-- Wishlist items will be dynamically added here -->
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Function to add item to wishlist
+    function addToWishlist(item) {
+        fetch('/wishlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ item: item })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert(item + " added to wishlist!");
+            } else {
+                alert("Failed to add " + item + " to wishlist!");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Failed to add " + item + " to wishlist!");
+        });
+    }
+
+    // Function to get wishlist items and display them
+    function displayWishlist() {
+        fetch('/wishlist')
+        .then(response => response.json())
+        .then(data => {
+            const wishlistItems = data.wishlist_items;
+            const wishlistContainer = document.getElementById('wishlist-container');
+            wishlistContainer.innerHTML = ''; // Clear previous items
+
+            wishlistItems.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item;
+                wishlistContainer.appendChild(listItem);
+            });
+        })
+        .catch(error => console.error('Error fetching wishlist items:', error));
+    }
+
+    // Call the displayWishlist function when the page loads to show existing wishlist items
+    window.onload = displayWishlist;
+</script>
+</body>
+</html>

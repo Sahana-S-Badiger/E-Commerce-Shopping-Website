@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <style>
+        /* CSS styles for the checkout page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .checkout-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .checkout-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-item p {
+            margin: 0;
+        }
+
+        .empty-message {
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Checkout</h1>
+
+        <div id="checkout-items">
+            <!-- Wishlist items will be dynamically added here -->
+        </div>
+
+        <div class="empty-message" id="empty-message">
+            Your wishlist is empty.
+        </div>
+    </div>
+
+    <script>
+        // Function to fetch wishlist items and display them
+        function displayCheckoutItems() {
+            fetch('/wishlist')
+            .then(response => response.json())
+            .then(data => {
+                const wishlistItems = data.wishlist_items;
+                const checkoutItemsContainer = document.getElementById('checkout-items');
+                const emptyMessage = document.getElementById('empty-message');
+
+                if (wishlistItems.length === 0) {
+                    emptyMessage.style.display = 'block';
+                } else {
+                    emptyMessage.style.display = 'none';
+
+                    wishlistItems.forEach(item => {
+                        const checkoutItemDiv = document.createElement('div');
+                        checkoutItemDiv.classList.add('checkout-item');
+
+                        const itemNameParagraph = document.createElement('p');
+                        itemNameParagraph.textContent = item;
+                        
+                        checkoutItemDiv.appendChild(itemNameParagraph);
+                        checkoutItemsContainer.appendChild(checkoutItemDiv);
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching wishlist items:', error));
+        }
+
+        // Call the displayCheckoutItems function when the page loads to show wishlist items in the checkout
+        window.onload = displayCheckoutItems;
+    </script>
+</body>
+</html>
